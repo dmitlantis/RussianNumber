@@ -1,5 +1,7 @@
 <?php
 
+namespace app\components\helpers;
+
 /**
  * Число русской прописью
  *
@@ -25,8 +27,8 @@ class RussianNumber
     const CASE_GENITIVE = 'genitive'; // Родительный падеж
     const CASE_PLURAL = 'plural'; // Множественное число
     const GENDER = 'gender'; // Пол
-    const GENDER_MALE = 0;
-    const GENDER_FEMALE = 1;
+    const GENDER_MALE = false;
+    const GENDER_FEMALE = true;
 
     /** @var array Именование единиц измерения числовых разрядов */
     protected $units = [
@@ -118,7 +120,7 @@ class RussianNumber
             static::CASE_SUBJECTIVE => $subjectiveCase,
             static::CASE_GENITIVE   => $genitiveCase,
             static::CASE_PLURAL     => $pluralCase,
-            static::GENDER          => $femaleGender ? 1 : 0
+            static::GENDER          => $femaleGender
         ];
         return $this;
     }
