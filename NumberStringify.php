@@ -30,7 +30,7 @@ class RussianNumber
     const GENDER_MALE = false;
     const GENDER_FEMALE = true;
 
-    /** @var array Именование единиц измерения числовых разрядов */
+    /** @var array Именование единиц измерения числовых регистров */
     protected $units = [
         [
             self::CASE_SUBJECTIVE => 'копейка',
@@ -71,13 +71,13 @@ class RussianNumber
     public function __construct($number, int $digitsAfterZero = 2)
     {
         if ($digitsAfterZero <= 0) {
-            $number = floor($number);
-            $digitsAfterZero = -1; // Убираем точку
+            $rub = sprintf('%0' . static::MAX_DIGITS . 'd', floor($number));
         } elseif($digitsAfterZero > 3) {
             throw new \InvalidArgumentException('Больше 3 разрядов после запятой не поддерживается.');
+        } else {
+            $totalDigits = static::MAX_DIGITS + $digitsAfterZero + 1; // + точка
+            list($rub, $kop) = explode('.', sprintf("%0$totalDigits.{$digitsAfterZero}f", floatval($number)));
         }
-        $totalDigits = static::MAX_DIGITS + $digitsAfterZero + 1; // + точка
-        list($rub, $kop) = explode('.', sprintf("%0$totalDigits.{$digitsAfterZero}f", floatval($number)));
         if (intval($rub) > 0) {
             foreach(str_split($rub, 3) as $uk => $digits) { // by 3 symbols
                 if (!intval($digits)) {
@@ -133,7 +133,7 @@ class RussianNumber
         $result = [];
         foreach ($this->registers as $register => $tripod) {
 
-            if (empty($tripod)) {
+            if (empty($tripod) || $tripod == '000') {
                 $result[] = static::NUL;
             } else {
                 $gender = $this->units[$register][static::GENDER];
@@ -154,7 +154,10 @@ class RussianNumber
                 }
             }
 
-            $result[] = $this->morph($register, $tripod);
+            $morph = $this->morph($register, $tripod);
+            if (!empty($morph)) { // Возможность не указывать единицу измерения регистра
+                $result[] = $morph;
+            }
         }
         return implode(' ', $result);
     }
