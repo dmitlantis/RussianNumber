@@ -4,7 +4,7 @@
 ###### Примеры использования:
 
 ```php
-echo new RussianNumber(123.54);
+echo new RussianNumber(123.45);
 // сто двадцать три рубля сорок пять копеек
 
 echo RussianNumber::instantiate(100500.5, 2)
